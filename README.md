@@ -14,8 +14,11 @@ This script runs nmap to collect a list of live hosts. It then parses the target
 Requirements
 
 python3
+
 nmap
+
 pytenable
+
 `pip install pytenable`
   
 _No Windows Support ATM for nmapper_
