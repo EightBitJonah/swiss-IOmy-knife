@@ -1,13 +1,24 @@
 import subprocess,time,logging,os,sys
-from tenable.io import TenableIO
+
+
 
 __location__ = os.path.realpath(
         os.path.join(os.getcwd(), os.path.dirname(__file__))) 
 
 # API Keys are defined in a txt file
-apikeysfile = open(os.path.join(__location__, '..','apikeys.txt'))
-apikeys = apikeysfile.read()
-apikeysfile.close()
+accessfile = open(os.path.join(__location__, '..','accesskey.txt'))
+accesskey = accessfile.read()
+accessfile.close()
+
+secretfile = open(os.path.join(__location__, '..','accesskey.txt'))
+secretkey = secretfile.read()
+secretfile.close()
+
+#targetfile = open(os.path.join(__location__, 'targets.txt'))
+
+from tenable.io import TenableIO
+tio = TenableIO('{accesskey}','{secretkey}')
+
 
 windowsuser = os.name == 'nt'
 nixuser = os.name == 'posix' 
@@ -18,10 +29,7 @@ def nmapper() :
             time.sleep(3)
             return
     
-        # define variables
-
-        tio = TenableIO(apikeys)
-
+        
         scan = input("Please provide the scan ID that you would like to update: ")
         targetdir = input("Enter destination for Targets file: " )
         targets = input("Please provide a CIDR range to scan: ")
@@ -29,9 +37,13 @@ def nmapper() :
 
         print('Using these settings...' + '\n' + 'Scan ID ' + scan + '\n' + 'Targets ' + targets)
         
+ 
+
+            
+
         # Defining nmap scan + target output
         NMAPPER = "nmap -n -sn " + targets + " -oG - | awk '/Up$/{print $2}' > " + targetdir + "/targets.txt"
-        # NMAPPERWIN = "nmap -n -sn " + targets + " -oG - | powershell ForEach-Object { if ($_ -match 'Host: (\S+)') { $Matches[1] } } > " + targetdir + "\targets.txt"
+        #NMAPPERWIN = "nmap -n -sn " + targets + " -oG - | powershell ForEach-Object { if ($_ -match 'Host: (\S+)') { $Matches[1] } } > " + targetdir
 
         time.sleep(5)   
 
@@ -50,12 +62,10 @@ def nmapper() :
         #        print('nmap scan complete, reading target list...')
         #    else :
         #        print("nmap is not installed")
-        # removing Windows support
-        #    print("This script does not support Windows.")
-        #        exit()
+
 
         #defining target list to read
-        mytargets = open(targetdir + "/targets.txt","r")
+        mytargets = open(targetdir,"r")
         content = mytargets.read()
         content_list = content.split(",")
         mytargets.close()
