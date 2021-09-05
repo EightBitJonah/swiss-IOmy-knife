@@ -23,10 +23,10 @@ windowsuser = os.name == 'nt'
 nixuser = os.name == 'posix' 
 
 def nmapper() :
-        #if windowsuser : 
-        #    print("This script does not support Windows, returning to SwissCore")
-        #    time.sleep(3)
-        #    return
+        if windowsuser : 
+            print("This script does not support Windows, returning to SwissCore")
+            time.sleep(3)
+            return
     
         
         scan = input("Please provide the scan ID that you would like to update: ")
