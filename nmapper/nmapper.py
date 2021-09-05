@@ -1,5 +1,4 @@
 import subprocess,time,logging,os,sys
-#from swisscore import swissmenu
 
 __location__ = os.path.realpath(
         os.path.join(os.getcwd(), os.path.dirname(__file__))) 
