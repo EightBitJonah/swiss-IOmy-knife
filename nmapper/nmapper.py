@@ -1,7 +1,5 @@
 import subprocess,time,logging,os,sys
 
-
-
 __location__ = os.path.realpath(
         os.path.join(os.getcwd(), os.path.dirname(__file__))) 
 
@@ -35,11 +33,16 @@ def nmapper() :
         targets = input("Please provide a CIDR range to scan: ")
         
 
-        print('Using these settings...' + '\n' + 'Scan ID ' + scan + '\n' + 'Targets ' + targets)
-        
- 
+        print('Using these settings...' + '\n' + 'Scan ID ' + scan + '\n' + targetdir +'/targets.txt' + '\n'  'Targets ' + targets)
+        print('Are these settings correct? Y/N')
+        nmappernext = input('> ')
+        if nmappernext == ["Y", "y"] :
+            print('Starting nmap scan!')
+        elif nmappernext == ["N","n"] :
+            nmapper()
 
-            
+
+                     
 
         # Defining nmap scan + target output
         NMAPPER = "nmap -n -sn " + targets + " -oG - | awk '/Up$/{print $2}' > " + targetdir + "/targets.txt"
@@ -47,7 +50,6 @@ def nmapper() :
 
         time.sleep(5)   
 
-        print('Starting nmap scan!')
 
         if nixuser :
             subprocess.call(NMAPPER, shell=True)
@@ -79,6 +81,16 @@ def nmapper() :
 
 
         print('Success!')
+        print('Would you like to run another nmap scan? Y/N')
+        nmappernext
+        if nmappernext == ["Y","n"] :
+            nmapper()
+        elif nmappernext == ["N","n"] :
+            return
+
+
+
+
 
 
 if __name__ == "__nmapper__" : 
