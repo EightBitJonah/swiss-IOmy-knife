@@ -7,18 +7,24 @@ nmapperfolder = os.path.dirname(os.path.abspath(__file__))
 targetfile = os.path.join (nmapperfolder, 'targets.txt')
 
 
-# API Keys are defined in a txt file
-accessfile = open(os.path.join(__location__, '..','accesskey.txt'))
-accesskey = accessfile.read()
+# Import Database class using importlib to avoid path issues
+import importlib.util
+spec = importlib.util.spec_from_file_location("database", os.path.join(os.path.dirname(os.path.dirname(__file__)), "db", "database.py"))
+database = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(database)
+Database = database.Database
 
-
-secretfile = open(os.path.join(__location__, '..','secretkey.txt'))
-secretkey = secretfile.read()
-
-
+# Get API keys from database
+db = Database('swissknife.db')
+keys = db.get_api_key('tenable')
+if not keys:
+    print("No Tenable.io API keys found. Please set them up in the API Key Management menu.")
+    sys.exit(1)
+access_key, secret_key = keys
+db.close()
 
 from tenable.io import TenableIO
-tio = TenableIO(accesskey,secretkey)
+tio = TenableIO(access_key, secret_key)
 
 
 windowsuser = os.name == 'nt'
@@ -46,7 +52,7 @@ def nmapper() :
 
         # Defining nmap scan + target output
         NMAPPER = "nmap -n -sn " + targets + " -oG - | awk '/Up$/{print $2}' > " + targetfile 
-        NMAPPERWIN = "nmap -n -sn " + targets + " -oG - | powershell ForEach-Object { if ($_ -match 'Host: (\S+)') { $Matches[1] } } > " + targetfile 
+        NMAPPERWIN = f"nmap -n -sn {targets} -oG - | powershell ForEach-Object {{ if ($_ -match 'Host: (\S+)') {{ $Matches[1] }} }} > {targetfile}" 
 
         time.sleep(5)   
 
