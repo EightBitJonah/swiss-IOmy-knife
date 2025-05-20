@@ -44,7 +44,7 @@ def manage_api_keys():
         elif choice == "3":
             break
     db.close()
-
+    # Close the database connection when done
 def swissmenu():
     in_menu = True
     while in_menu:
