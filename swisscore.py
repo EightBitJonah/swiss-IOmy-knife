@@ -24,7 +24,8 @@ def manage_api_keys():
         print("\nAPI Key Management")
         print("1 - Update Tenable.io Keys")
         print("2 - Show Current API Keys")
-        print("3 - Back to Main Menu")
+        print("3 - Purge API Keys")
+        print("4 - Back to Main Menu")
         
         choice = input("> ")
         if choice == "1":
@@ -42,9 +43,17 @@ def manage_api_keys():
             else:
                 print("No API keys set for Tenable.io")
         elif choice == "3":
+            confirm = input("Are you sure you want to purge the API keys? (yes/no): ")
+            if confirm.lower() == 'yes':
+                db.cursor.execute('DELETE FROM api_keys WHERE service = ?', ('tenable',))
+                db.connection.commit()
+                print("API keys have been purged successfully!")
+            else:
+                print("Purge cancelled.")
+        elif choice == "4":
             break
     db.close()
-    # Close the database connection when done
+
 def swissmenu():
     in_menu = True
     while in_menu:
