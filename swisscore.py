@@ -54,15 +54,27 @@ def manage_api_keys():
             break
     db.close()
 
+def check_and_manage_api_keys():
+    db = Database('swissknife.db')
+    keys = db.get_api_key('tenable')
+    db.close()
+    if not keys:
+        print("\nNo Tenable.io API keys found. You need to set up API keys first.")
+        manage_api_keys()
+        return check_and_manage_api_keys()  # Check again after managing keys
+    return True
+
 def swissmenu():
     in_menu = True
     while in_menu:
         print(menu_str)
         moduleload = input("> ")
         if moduleload == "1":
-            nmapper.nmapper.nmapper()
+            if check_and_manage_api_keys():
+                nmapper.nmapper.nmapper()
         elif moduleload == "2":
-            mescans.mescans.mescans()
+            if check_and_manage_api_keys():
+                mescans.mescans.mescans()
         elif moduleload == "3": 
             print("Under construction!")
         elif moduleload == "4":

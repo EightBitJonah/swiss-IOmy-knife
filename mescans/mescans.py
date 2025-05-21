@@ -1,5 +1,6 @@
 import os,sys,time,pprint,re
 from tabulate import tabulate
+from tenable.io import TenableIO
 
 # Import Database class using importlib to avoid path issues
 import importlib.util
@@ -8,19 +9,14 @@ database = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(database)
 Database = database.Database
 
-# Get API keys from database
-db = Database('swissknife.db')
-keys = db.get_api_key('tenable')
-if not keys:
-    print("No Tenable.io API keys found. Please set them up in the API Key Management menu.")
-    sys.exit(1)
-access_key, secret_key = keys
-db.close()
-
-from tenable.io import TenableIO
-tio = TenableIO(access_key, secret_key)
-
 def mescans():
+    # Get API keys
+    db = Database('swissknife.db')
+    access_key, secret_key = db.get_api_key('tenable')
+    db.close()
+    
+    tio = TenableIO(access_key, secret_key)
+    
     try:
         # Get scan list from API
         raw_scans = tio.scans.list()
